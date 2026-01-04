@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discory Brasil | 2026 🥂</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --gold: #d4af37; --dark: #0a0a0b; --discord-blue: #5865f2; }
+        body { background-color: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .modal-bg { background: rgba(0,0,0,0.9); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .btn-gold { background: linear-gradient(45deg, #d4af37, #f9e29d); color: black; font-weight: bold; transition: 0.3s; }
+        .btn-gold:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
+        .sidebar { background-color: #111214; border-right: 1px solid #2d2d30; }
+        #chat-box::-webkit-scrollbar { width: 4px; }
+        #chat-box::-webkit-scrollbar-thumb { background: var(--gold); }
+    </style>
+</head>
+<body class="flex h-screen">
+
+<div id="screen-register" class="modal-bg">
+    <div class="bg-[#1e1f22] p-8 rounded-2xl border border-white/10 w-96 text-center">
+        <h1 class="text-3xl font-black text-white mb-2">Discory Brasil</h1>
+        <p class="text-gray-400 mb-6 text-sm">Crie sua conta para 2026</p>
+        <div class="space-y-4 text-left">
+            <input type="text" id="reg-user" placeholder="Nome de Usuário" class="w-full p-3 bg-black/40 rounded border border-white/10 outline-none focus:border-[#d4af37]">
+            <input type="email" id="reg-email" placeholder="E-mail" class="w-full p-3 bg-black/40 rounded border border-white/10 outline-none">
+            <input type="password" id="reg-pass" placeholder="Senha" class="w-full p-3 bg-black/40 rounded border border-white/10 outline-none">
+            <button onclick="mostrarCaptcha()" class="w-full btn-gold py-3 rounded-xl uppercase">Cadastrar</button>
+        </div>
+    </div>
+</div>
+
+<div id="screen-captcha" class="modal-bg hidden">
+    <div class="bg-white p-6 rounded-xl text-black text-center w-80">
+        <h3 class="font-bold text-lg mb-4">Verificação Humana</h3>
+        <p class="text-sm mb-4">Clique no círculo azul para provar que você é brasileiro e não um robô!</p>
+        <div class="h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+            <div onclick="finalizarCadastro()" class="w-16 h-16 bg-blue-600 rounded-full cursor-pointer hover:scale-110 transition flex items-center justify-center text-white font-bold">OK</div>
+        </div>
+    </div>
+</div>
+
+<div id="main-app" class="flex w-full hidden">
+    <nav class="w-20 sidebar flex flex-col items-center py-6 space-y-4">
+        <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-[#d4af37] text-[#d4af37] font-bold">DB</div>
+        <div class="w-8 h-[2px] bg-white/10"></div>
+        <button onclick="alert('Criar Servidor Personalizado')" class="w-12 h-12 bg-gray-800 text-green-500 rounded-full text-2xl hover:rounded-xl transition-all">+</button>
+    </nav>
+
+    <aside class="w-64 bg-[#18191c] flex flex-col border-r border-white/5">
+        <div class="p-4 font-bold border-b border-white/5 flex justify-between">
+            <span>Discory Brasil</span>
+            <span>✨</span>
+        </div>
+        <div class="flex-grow p-2 space-y-1">
+            <div onclick="showAba('chat')" class="p-2 hover:bg-white/5 rounded cursor-pointer text-gray-400 hover:text-white flex items-center">
+                <span class="mr-2">💬</span> Geral
+            </div>
+            <div onclick="showAba('nitro')" class="p-2 hover:bg-white/5 rounded cursor-pointer text-gray-400 hover:text-white flex items-center">
+                <span class="mr-2">💎</span> Nitro 2026
+            </div>
+            <div onclick="showAba('ia')" class="p-2 hover:bg-white/5 rounded cursor-pointer text-gray-400 hover:text-white flex items-center">
+                <span class="mr-2">🤖</span> Discory IA
+            </div>
+        </div>
+        <div class="bg-[#111214] p-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-[#d4af37] rounded-full text-black font-bold flex items-center justify-center text-xs" id="user-icon">U</div>
+                <div class="text-xs">
+                    <div id="user-display" class="font-bold truncate w-24">Usuário</div>
+                    <div class="text-gray-500">#2026</div>
+                </div>
+            </div>
+            <button onclick="showAba('perfil')" class="text-gray-400 hover:text-white">⚙️</button>
+        </div>
+    </aside>
+
+    <main class="flex-grow flex flex-col bg-[#313338] relative">
+        <header class="h-12 border-b border-black/20 flex items-center justify-between px-4 bg-[#313338]">
+            <span class="font-bold" id="header-title"># geral</span>
+            <div class="flex space-x-4 text-gray-400">
+                <button onclick="alert('Iniciando Chamada de Voz...')">📞</button>
+                <button onclick="alert('Iniciando Vídeo...')">🎥</button>
+                <button onclick="copiarLink()">🔗 Convite</button>
+            </div>
+        </header>
+
+        <div class="flex-grow overflow-y-auto p-4">
+            <div id="view-chat" class="h-full flex flex-col justify-end">
+                <div id="chat-messages" class="space-y-4 mb-4 text-gray-300">
+                    <p class="text-[#d4af37]">✨ Bem-vindo ao Discory Brasil! Boas festas!</p>
+                </div>
+                <input type="text" placeholder="Conversar em #geral" class="w-full p-3 bg-[#383a40] rounded-xl outline-none">
+            </div>
+
+            <div id="view-nitro" class="hidden">
+                <h2 class="text-3xl font-black mb-6 text-[#d4af37]">Assine o Nitro</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
+                        <h3 class="font-bold">Nitro Basic</h3>
+                        <p class="text-2xl font-black my-2">R$ 8,90</p>
+                        <button onclick="pagarPix('8,90')" class="w-full btn-gold py-2 rounded-lg">Comprar</button>
+                    </div>
+                    <div class="bg-white/5 p-6 rounded-2xl border border-[#d4af37]">
+                        <h3 class="font-bold">Nitro Pro</h3>
+                        <p class="text-2xl font-black my-2 text-[#d4af37]">R$ 24,99</p>
+                        <button onclick="pagarPix('24,99')" class="w-full btn-gold py-2 rounded-lg">Comprar</button>
+                    </div>
+                </div>
+                <div class="mt-8 p-4 bg-black/40 rounded-lg border border-dashed border-[#d4af37]">
+                    <p class="text-xs text-gray-400">PAGAMENTO VIA PIX:</p>
+                    <p class="text-xl font-mono text-white">04273768585</p>
+                </div>
+            </div>
+
+            <div id="view-ia" class="hidden h-full flex flex-col">
+                <div id="ia-box" class="flex-grow bg-black/20 p-4 rounded-xl mb-4 overflow-y-auto space-y-3">
+                    <p class="text-blue-400"><b>IA Discory:</b> Olá! Em que posso ajudar você no Discory Brasil hoje?</p>
+                </div>
+                <div class="flex space-x-2">
+                    <input type="text" id="ia-input" class="flex-grow p-3 bg-[#383a40] rounded-lg outline-none" placeholder="Pergunte qualquer coisa...">
+                    <button onclick="perguntaIA()" class="bg-[#d4af37] text-black px-6 rounded-lg font-bold">Falar</button>
+                </div>
+            </div>
+
+            <div id="view-perfil" class="hidden max-w-lg mx-auto">
+                <h2 class="text-xl font-bold mb-4">Configurações de Usuário</h2>
+                <div class="bg-[#2b2d31] p-6 rounded-2xl space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400 font-bold">NOME DE USUÁRIO</label>
+                        <input type="text" id="new-name" class="w-full p-2 bg-black/20 rounded mt-1 outline-none border border-white/5 focus:border-[#d4af37]">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 font-bold">E-MAIL</label>
+                        <input type="text" id="view-email" readonly class="w-full p-2 bg-transparent text-gray-500">
+                    </div>
+                    <button onclick="alterarNome()" class="w-full bg-[#5865f2] py-2 rounded font-bold">Salvar Alterações</button>
+                    <hr class="border-white/5">
+                    <button onclick="location.reload()" class="w-full bg-red-500/20 text-red-500 py-2 rounded hover:bg-red-500 hover:text-white transition">Sair da Conta</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let ultimaTroca = null;
+
+    function mostrarCaptcha() {
+        if(!document.getElementById('reg-user').value) return alert("Preencha seu nome!");
+        document.getElementById('screen-register').classList.add('hidden');
+        document.getElementById('screen-captcha').classList.remove('hidden');
+    }
+
+    function finalizarCadastro() {
+        const nome = document.getElementById('reg-user').value;
+        const email = document.getElementById('reg-email').value;
+        document.getElementById('user-display').innerText = nome;
+        document.getElementById('new-name').value = nome;
+        document.getElementById('view-email').value = email;
+        document.getElementById('user-icon').innerText = nome[0].toUpperCase();
+        
+        document.getElementById('screen-captcha').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+    }
+
+    function showAba(aba) {
+        ['chat', 'nitro', 'ia', 'perfil'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+        document.getElementById('view-'+aba).classList.remove('hidden');
+        document.getElementById('header-title').innerText = '# ' + aba;
+    }
+
+    function pagarPix(valor) {
+        alert("Escaneie o QR Code para pagar R$ " + valor + "\nChave PIX: 04273768585");
+    }
+
+    function alterarNome() {
+        const agora = new Date();
+        if (ultimaTroca && (agora - ultimaTroca < 14 * 24 * 60 * 60 * 1000)) {
+            alert("Atenção: Você só pode mudar seu nome a cada 14 dias!");
+            return;
+        }
+        const novoNome = document.getElementById('new-name').value;
+        document.getElementById('user-display').innerText = novoNome;
+        ultimaTroca = agora;
+        alert("Nome atualizado com sucesso!");
+    }
+
+    function perguntaIA() {
+        const input = document.getElementById('ia-input');
+        const box = document.getElementById('ia-box');
+        if(!input.value) return;
+
+        box.innerHTML += `<p class="text-right text-gray-300"><b>Você:</b> ${input.value}</p>`;
+        const userMsg = input.value;
+        input.value = "";
+
+        setTimeout(() => {
+            box.innerHTML += `<p class="text-blue-400"><b>IA Discory:</b> Feliz 2026! Você disse "${userMsg}". Como posso ajudar o Discory Brasil a crescer?</p>`;
+            box.scrollTop = box.scrollHeight;
+        }, 600);
+    }
+
+    function copiarLink() {
+        const link = "https://www.discorybrasil.com.br/convite-" + Math.floor(Math.random()*9999);
+        prompt("Link de convite criado! Copie abaixo:", link);
+    }
+</script>
+</body>
+</html>
